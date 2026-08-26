@@ -100,105 +100,200 @@
 </div>
 
 <script>
-const H=9, W=10;
-// Çözüm hücreleri: [satir, sutun, harf]
-const cells = [[0,5,"H"],[1,0,"A"],[1,1,"L"],[1,2,"G"],[1,3,"O"],[1,4,"R"],[1,5,"İ"],[1,6,"T"],[1,7,"M"],[1,8,"A"],[2,5,"B"],[3,0,"S"],[3,1,"E"],[3,2,"N"],[3,3,"S"],[3,4,"Ö"],[3,5,"R"],[3,7,"S"],[4,1,"N"],[4,5,"İ"],[4,7,"U"],[5,1,"E"],[5,4,"O"],[5,5,"T"],[5,6,"O"],[5,7,"N"],[5,8,"O"],[5,9,"M"],[6,1,"R"],[6,7,"U"],[7,1,"J"],[7,7,"C"],[8,1,"İ"],[8,7,"U"]];
+"use strict";
+/* ============================================================
+   GÜVENLİK NOTU
+   Bu dosyada cevap harfleri HİÇBİR yerde açık olarak yer almaz.
+   Doğrulama, tuzlanmış (salted) ve 150.000 kez yinelenen SHA-256
+   özetleri karşılaştırılarak yapılır. Konsoldan veya kaynak
+   görüntüleyerek cevabı okumak mümkün değildir.
+   ============================================================ */
+(function(){
 
-// Kelimeler: başlangıç, yön, ipucu no, key hücresi (SİSTEM sırası)
-const kelimeler = [
-  {clue:1, dir:"across", r:3, c:0, len:6, soru:"Sıcaklık, ışık veya hareket gibi fiziksel verileri ölçüp elektronik sinyale çeviren algılayıcı birim.", keyr:3, keyc:3},
-  {clue:2, dir:"down",   r:0, c:5, len:6, soru:"Hem içten yanmalı motoru hem de elektrik motorunu birlikte kullanan araç türü.", keyr:4, keyc:5},
-  {clue:3, dir:"down",   r:3, c:7, len:6, soru:"Ağ üzerinden diğer cihazlara veri ve hizmet sağlayan merkezi bilgisayar (server).", keyr:3, keyc:7},
-  {clue:4, dir:"across", r:5, c:4, len:6, soru:"Sürücüye gerek kalmadan kendi kendine gidebilen araç türü.", keyr:5, keyc:5},
-  {clue:5, dir:"down",   r:3, c:1, len:6, soru:"İş yapabilme gücü; elektrikli araçların bataryasında depolanır.", keyr:5, keyc:1},
-  {clue:6, dir:"across", r:1, c:0, len:9, soru:"Bir problemi çözmek için izlenen adım adım işlem dizisi; yapay zekânın temeli.", keyr:1, keyc:7},
+/* ---------- Saf JS SHA-256 (harici kaynak yok, çevrimdışı çalışır) ---------- */
+const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+function utf8(s){const o=[];for(let i=0;i<s.length;i++){let c=s.charCodeAt(i);
+ if(c<0x80)o.push(c);
+ else if(c<0x800){o.push(0xc0|c>>6,0x80|c&63);}
+ else if(c<0xd800||c>=0xe000){o.push(0xe0|c>>12,0x80|(c>>6&63),0x80|c&63);}
+ else{i++;const cp=0x10000+(((c&0x3ff)<<10)|(s.charCodeAt(i)&0x3ff));
+  o.push(0xf0|cp>>18,0x80|(cp>>12&63),0x80|(cp>>6&63),0x80|cp&63);}}
+ return o;}
+function sha256bytes(bytes){
+ let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,
+     h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;
+ const bitLen=bytes.length*8;
+ const p=bytes.slice();p.push(0x80);
+ while(p.length%64!==56)p.push(0);
+ for(let i=7;i>=0;i--)p.push(Math.floor(bitLen/Math.pow(2,i*8))&0xff);
+ const w=new Int32Array(64);
+ for(let off=0;off<p.length;off+=64){
+  for(let i=0;i<16;i++)w[i]=(p[off+i*4]<<24)|(p[off+i*4+1]<<16)|(p[off+i*4+2]<<8)|p[off+i*4+3];
+  for(let i=16;i<64;i++){const x=w[i-15],y=w[i-2];
+   const s0=((x>>>7)|(x<<25))^((x>>>18)|(x<<14))^(x>>>3);
+   const s1=((y>>>17)|(y<<15))^((y>>>19)|(y<<13))^(y>>>10);
+   w[i]=(w[i-16]+s0+w[i-7]+s1)|0;}
+  let a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,hh=h7;
+  for(let i=0;i<64;i++){
+   const S1=((e>>>6)|(e<<26))^((e>>>11)|(e<<21))^((e>>>25)|(e<<7));
+   const ch=(e&f)^(~e&g);
+   const t1=(hh+S1+ch+K[i]+w[i])|0;
+   const S0=((a>>>2)|(a<<30))^((a>>>13)|(a<<19))^((a>>>22)|(a<<10));
+   const maj=(a&b)^(a&c)^(b&c);
+   const t2=(S0+maj)|0;
+   hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;}
+  h0=(h0+a)|0;h1=(h1+b)|0;h2=(h2+c)|0;h3=(h3+d)|0;
+  h4=(h4+e)|0;h5=(h5+f)|0;h6=(h6+g)|0;h7=(h7+hh)|0;}
+ const out=[];[h0,h1,h2,h3,h4,h5,h6,h7].forEach(x=>{out.push((x>>>24)&255,(x>>>16)&255,(x>>>8)&255,x&255);});
+ return out;}
+function hex(b){return b.map(x=>x.toString(16).padStart(2,"0")).join("");}
+
+/* Yavaş özet: kaba kuvvet denemelerini pahalı hale getirir */
+const SALT="TMTR-2026-08-cengel-v1";
+const ITER=150000;
+const _cache=new Map();
+function slowHash(str){
+ if(_cache.has(str))return _cache.get(str);
+ let b=sha256bytes(utf8(SALT+"|"+str));
+ for(let i=0;i<ITER;i++){b=sha256bytes(b);}
+ const h=hex(b);_cache.set(str,h);return h;}
+/* Zamanlama sızıntısını azaltan sabit süreli karşılaştırma */
+function esit(a,b){if(a.length!==b.length)return false;let d=0;
+ for(let i=0;i<a.length;i++)d|=a.charCodeAt(i)^b.charCodeAt(i);return d===0;}
+
+/* ---------- Doğrulama sabitleri (harf içermez) ---------- */
+const GRID_HASH="6d321d8ea42887deb0e22ea30ed44cd14e38be21a59c08e3e91fef2ade7c734c";
+const KEY_HASH ="6eb67b670c7ebdf07578839b4f839d4dd1438fff717bbee918d3e74e41ae97f4";
+
+/* ---------- Izgara yapısı: yalnızca koordinatlar, harf YOK ---------- */
+const H=9, W=10;
+const coords=[[0,5],[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[2,5],[3,0],[3,1],[3,2],[3,3],[3,4],[3,5],[3,7],[4,1],[4,5],[4,7],[5,1],[5,4],[5,5],[5,6],[5,7],[5,8],[5,9],[6,1],[6,7],[7,1],[7,7],[8,1],[8,7]];
+
+/* Kelimeler: konum, yön, ipucu, anahtar (sarı) hücre — cevap harfi yok */
+const kelimeler=[
+ {clue:1, dir:"across", r:3, c:0, len:6, soru:"Sıcaklık, ışık veya hareket gibi fiziksel verileri ölçüp elektronik sinyale çeviren algılayıcı birim.", keyr:3, keyc:3},
+ {clue:2, dir:"down",   r:0, c:5, len:6, soru:"Hem içten yanmalı motoru hem de elektrik motorunu birlikte kullanan araç türü.", keyr:4, keyc:5},
+ {clue:3, dir:"down",   r:3, c:7, len:6, soru:"Ağ üzerinden diğer cihazlara veri ve hizmet sağlayan merkezi bilgisayar (server).", keyr:3, keyc:7},
+ {clue:4, dir:"across", r:5, c:4, len:6, soru:"Sürücüye gerek kalmadan kendi kendine gidebilen araç türü.", keyr:5, keyc:5},
+ {clue:5, dir:"down",   r:3, c:1, len:6, soru:"İş yapabilme gücü; elektrikli araçların bataryasında depolanır.", keyr:5, keyc:1},
+ {clue:6, dir:"across", r:1, c:0, len:9, soru:"Bir problemi çözmek için izlenen adım adım işlem dizisi; yapay zekânın temeli.", keyr:1, keyc:7}
 ];
 
-const TR = s => (s||"").toLocaleUpperCase("tr-TR");
-const map = {};            // "r,c" -> harf
-cells.forEach(([r,c,h]) => map[r+","+c] = h);
+const TR=s=>(s||"").toLocaleUpperCase("tr-TR");
+const dolulukSet=new Set(coords.map(p=>p[0]+","+p[1]));
+/* Özet için kanonik hücre sırası (satır, sonra sütun) */
+const sirali=coords.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(p=>p[0]+","+p[1]);
 
-// key hücreleri ve şifre sırası
-const keyOrder = {};       // "r,c" -> pos(1..6)
-kelimeler.slice().sort((a,b)=>a.clue-b.clue).forEach(k => keyOrder[k.keyr+","+k.keyc] = k.clue);
-// başlangıç numaraları
-const startNo = {};
-kelimeler.forEach(k => { const key=k.r+","+k.c; startNo[key] = (startNo[key]||k.clue); });
+const keyOrder={};
+kelimeler.slice().sort((a,b)=>a.clue-b.clue).forEach(k=>keyOrder[k.keyr+","+k.keyc]=k.clue);
+const startNo={};
+kelimeler.forEach(k=>{const key=k.r+","+k.c;startNo[key]=(startNo[key]||k.clue);});
 
-const izgara = document.getElementById("izgara");
-izgara.style.gridTemplateColumns = `repeat(${W}, 42px)`;
-izgara.style.gridTemplateRows = `repeat(${H}, 42px)`;
+const izgara=document.getElementById("izgara");
+izgara.style.gridTemplateColumns=`repeat(${W}, 42px)`;
+izgara.style.gridTemplateRows=`repeat(${H}, 42px)`;
 
-const inputs = {}; // "r,c" -> input
-for (let r=0;r<H;r++){
-  for (let c=0;c<W;c++){
-    const key=r+","+c;
-    const div=document.createElement("div");
-    div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
-    if (map[key]===undefined){ div.className="bos"; izgara.appendChild(div); continue; }
-    div.className="cell"+(keyOrder[key]?" key":"");
-    if (startNo[key]){ const n=document.createElement("span"); n.className="no"; n.textContent=startNo[key]; div.appendChild(n); }
-    if (keyOrder[key]){ const p=document.createElement("span"); p.className="pos"; p.textContent=keyOrder[key]; div.appendChild(p); }
-    const inp=document.createElement("input");
-    inp.maxLength=1; inp.dataset.r=r; inp.dataset.c=c;
-    div.appendChild(inp); izgara.appendChild(div);
-    inputs[key]=inp;
-  }
+const inputs={};
+for(let r=0;r<H;r++){
+ for(let c=0;c<W;c++){
+  const key=r+","+c;
+  const div=document.createElement("div");
+  div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
+  if(!dolulukSet.has(key)){div.className="bos";izgara.appendChild(div);continue;}
+  div.className="cell"+(keyOrder[key]?" key":"");
+  if(startNo[key]){const n=document.createElement("span");n.className="no";n.textContent=startNo[key];div.appendChild(n);}
+  if(keyOrder[key]){const p=document.createElement("span");p.className="pos";p.textContent=keyOrder[key];div.appendChild(p);}
+  const inp=document.createElement("input");
+  inp.maxLength=1; inp.dataset.r=r; inp.dataset.c=c;
+  inp.setAttribute("autocomplete","off");
+  inp.setAttribute("autocapitalize","characters");
+  inp.setAttribute("spellcheck","false");
+  div.appendChild(inp); izgara.appendChild(div);
+  inputs[key]=inp;
+ }
 }
 
-// ipuçları
+/* ipuçları — textContent ile güvenli ekleme (HTML enjeksiyonuna kapalı) */
 kelimeler.forEach(k=>{
-  const li=document.createElement("li");
-  li.innerHTML=`<b>${k.clue}</b><span>${k.soru} <span class="uzunluk">(${k.len} harf)</span></span>`;
-  document.getElementById(k.dir).appendChild(li);
+ const li=document.createElement("li");
+ const b=document.createElement("b"); b.textContent=k.clue;
+ const sp=document.createElement("span"); sp.textContent=k.soru+" ";
+ const u=document.createElement("span"); u.className="uzunluk"; u.textContent="("+k.len+" harf)";
+ sp.appendChild(u); li.appendChild(b); li.appendChild(sp);
+ document.getElementById(k.dir).appendChild(li);
 });
 
-// şifre kutuları
+/* şifre kutuları */
 const sifreSatir=document.getElementById("sifreSatir");
 for(let i=0;i<6;i++){const sb=document.createElement("div");sb.className="sb";sb.textContent="?";sifreSatir.appendChild(sb);}
 
+const sirasiz=kelimeler.slice().sort((a,b)=>a.clue-b.clue);
+const mesaj=document.getElementById("mesaj");
+let bekleyen=null;
+
 function sifreGuncelle(){
-  const boxes=sifreSatir.children;
-  kelimeler.slice().sort((a,b)=>a.clue-b.clue).forEach(k=>{
-    const inp=inputs[k.keyr+","+k.keyc];
-    const v=TR(inp.value||"");
-    boxes[k.clue-1].textContent=v||"?";
-    boxes[k.clue-1].classList.toggle("dolu",!!v);
-  });
-  // çözüldü mü? (gizli kelime SİSTEM)
-  const sifre=kelimeler.slice().sort((a,b)=>a.clue-b.clue).map(k=>TR(inputs[k.keyr+","+k.keyc].value||"")).join("");
-  const mesaj=document.getElementById("mesaj");
-  // tüm ızgara doğru doldu mu?
-  let tamam=true;
-  for(const key in map){ if(TR(inputs[key].value||"")!==TR(map[key])){tamam=false;break;} }
-  if(tamam){ mesaj.textContent="🎉 Tebrikler! Bulmacayı çözdün. Gizli kelime: "+sifre; }
-  else if(sifre==="SİSTEM"){ mesaj.textContent="✅ Gizli kelimeyi buldun: SİSTEM! Birkaç kutu hâlâ eksik olabilir."; }
-  else { mesaj.textContent=""; }
+ const boxes=sifreSatir.children;
+ sirasiz.forEach(k=>{
+  const v=TR(inputs[k.keyr+","+k.keyc].value||"");
+  boxes[k.clue-1].textContent=v||"?";
+  boxes[k.clue-1].classList.toggle("dolu",!!v);
+ });
+ /* Ağır doğrulamayı geciktir: her tuşta değil, yazım durunca çalışır */
+ clearTimeout(bekleyen);
+ bekleyen=setTimeout(dogrula,220);
 }
 
-// etkileşim
+function dogrula(){
+ const sifre=sirasiz.map(k=>TR(inputs[k.keyr+","+k.keyc].value||"")).join("");
+ let tamMetin="",tamDolu=true;
+ for(const key of sirali){
+  const v=TR(inputs[key].value||"");
+  if(!v){tamDolu=false;break;}
+  tamMetin+=v;
+ }
+ if(tamDolu && esit(slowHash(tamMetin),GRID_HASH)){
+  mesaj.textContent="🎉 Tebrikler! Bulmacayı çözdün. Gizli kelime: "+sifre;
+  return;
+ }
+ if(sifre.length===6 && esit(slowHash(sifre),KEY_HASH)){
+  mesaj.textContent="✅ Gizli kelimeyi buldun! Birkaç kutu hâlâ eksik olabilir.";
+  return;
+ }
+ mesaj.textContent="";
+}
+
+/* etkileşim */
 Object.values(inputs).forEach(inp=>{
-  inp.addEventListener("input",()=>{
-    inp.value=TR(inp.value).replace(/[^A-ZÇĞİIÖŞÜ]/g,"");
-    sifreGuncelle();
-    if(inp.value){ // sağdaki, yoksa alttaki dolu hücreye geç
-      const r=+inp.dataset.r,c=+inp.dataset.c;
-      const nxt=inputs[r+","+(c+1)]||inputs[(r+1)+","+c];
-      if(nxt) nxt.focus();
-    }
-  });
-  inp.addEventListener("keydown",e=>{
-    const r=+inp.dataset.r,c=+inp.dataset.c;
-    if(e.key==="Backspace"&&!inp.value){const p=inputs[r+","+(c-1)]||inputs[(r-1)+","+c];if(p)p.focus();}
-    if(e.key==="ArrowRight"&&inputs[r+","+(c+1)])inputs[r+","+(c+1)].focus();
-    if(e.key==="ArrowLeft"&&inputs[r+","+(c-1)])inputs[r+","+(c-1)].focus();
-    if(e.key==="ArrowDown"&&inputs[(r+1)+","+c])inputs[(r+1)+","+c].focus();
-    if(e.key==="ArrowUp"&&inputs[(r-1)+","+c])inputs[(r-1)+","+c].focus();
-  });
+ inp.addEventListener("input",()=>{
+  inp.value=TR(inp.value).replace(/[^A-ZÇĞİIÖŞÜ]/g,"");
+  sifreGuncelle();
+  if(inp.value){
+   const r=+inp.dataset.r,c=+inp.dataset.c;
+   const nxt=inputs[r+","+(c+1)]||inputs[(r+1)+","+c];
+   if(nxt)nxt.focus();
+  }
+ });
+ inp.addEventListener("keydown",e=>{
+  const r=+inp.dataset.r,c=+inp.dataset.c;
+  if(e.key==="Backspace"&&!inp.value){const p=inputs[r+","+(c-1)]||inputs[(r-1)+","+c];if(p)p.focus();}
+  if(e.key==="ArrowRight"&&inputs[r+","+(c+1)])inputs[r+","+(c+1)].focus();
+  if(e.key==="ArrowLeft"&&inputs[r+","+(c-1)])inputs[r+","+(c-1)].focus();
+  if(e.key==="ArrowDown"&&inputs[(r+1)+","+c])inputs[(r+1)+","+c].focus();
+  if(e.key==="ArrowUp"&&inputs[(r-1)+","+c])inputs[(r-1)+","+c].focus();
+ });
 });
 
-function temizle(){Object.values(inputs).forEach(i=>i.value="");sifreGuncelle();}
+window.temizle=function(){Object.values(inputs).forEach(i=>i.value="");sifreGuncelle();};
 sifreGuncelle();
+
+})();
 </script>
 </body>
 </html>
