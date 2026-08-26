@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toyota Ağustos Teknoloji Bülteni · Çengel Bulmaca</title>
+<style>
+  :root{
+    --kirmizi:#EB0A1E;--koyu:#1a1a1a;--gri:#6b7280;--kart:#fff;
+    --sifre:#fff3cd;--sifre-kenar:#EB0A1E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+    background:linear-gradient(180deg,#fafafa 0%,#eef0f3 100%);color:var(--koyu);
+    line-height:1.5;padding:24px 14px 60px;}
+  .wrap{max-width:880px;margin:0 auto;}
+  header{background:var(--koyu);color:#fff;border-radius:16px;padding:26px 28px;position:relative;overflow:hidden;}
+  header::before{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:var(--kirmizi);opacity:.85;}
+  .marka{font-size:13px;letter-spacing:4px;text-transform:uppercase;color:#ffb3b9;font-weight:700;}
+  header h1{margin:6px 0 4px;font-size:26px;position:relative;z-index:1;}
+  header p{margin:0;color:#cbd0d6;font-size:14px;position:relative;z-index:1;}
+  .aciklama{background:var(--kart);border:1px solid #e5e7eb;border-left:5px solid var(--kirmizi);
+    border-radius:12px;padding:16px 18px;margin:18px 0 22px;font-size:14.5px;color:#374151;}
+  .alanlar{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;}
+  .izgara-kutu{flex:0 0 auto;margin:0 auto;}
+  #izgara{display:grid;gap:3px;background:transparent;}
+  .bos{width:42px;height:42px;}
+  .cell{position:relative;width:42px;height:42px;}
+  .cell input{width:100%;height:100%;text-align:center;font-size:20px;font-weight:700;
+    text-transform:uppercase;border:2px solid #c7ccd1;border-radius:6px;background:#fff;
+    color:var(--koyu);outline:none;padding:0;transition:.12s;}
+  .cell input:focus{border-color:var(--kirmizi);box-shadow:0 0 0 3px rgba(235,10,30,.18);}
+  .cell.key input{background:var(--sifre);border-color:var(--sifre-kenar);}
+  .cell .no{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:var(--kirmizi);z-index:2;pointer-events:none;}
+  .cell .pos{position:absolute;top:-8px;right:-7px;width:17px;height:17px;background:var(--kirmizi);
+    color:#fff;font-size:10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;z-index:3;}
+  .ipuclari{flex:1 1 300px;min-width:280px;}
+  .ipucu-grup h3{margin:0 0 8px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--kirmizi);}
+  .ipucu-grup{background:var(--kart);border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;}
+  .ipucu-grup ol{margin:0;padding-left:0;list-style:none;}
+  .ipucu-grup li{font-size:14px;color:#374151;margin-bottom:9px;display:flex;gap:8px;}
+  .ipucu-grup li b{flex:0 0 auto;width:22px;height:22px;background:var(--koyu);color:#fff;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .uzunluk{color:var(--gri);font-size:12.5px;}
+  .butonlar{margin:20px 0 16px;}
+  button{font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;border:none;border-radius:10px;padding:11px 22px;background:#e5e7eb;color:#374151;transition:.15s;}
+  button:hover{background:#d1d5db;}
+  .sifre-kutu{background:var(--koyu);color:#fff;border-radius:14px;padding:20px 22px;margin-top:8px;text-align:center;}
+  .sifre-kutu h3{margin:0 0 6px;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:#ffb3b9;}
+  .sifre-kutu .alt{font-size:12.5px;color:#9ca3af;margin-bottom:14px;}
+  .sifre-satir{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+  .sb{width:44px;height:50px;border-radius:8px;border:2px dashed #4b5563;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;background:#262626;}
+  .sb.dolu{border-style:solid;border-color:var(--kirmizi);background:var(--kirmizi);}
+  .mesaj{margin-top:16px;font-size:15px;font-weight:600;min-height:22px;color:#bbf7d0;}
+  footer{text-align:center;color:var(--gri);font-size:12.5px;margin-top:30px;}
+  @media(max-width:560px){.bos,.cell{width:33px;height:33px;}.cell input{font-size:15px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="marka">Toyota · Ağustos Teknoloji Bülteni</div>
+    <h1>Aylık Çengel Bulmaca</h1>
+    <p>Kelimeler birbirini kesiyor. Sarı kutulardaki harfleri sırayla topla, gizli kelimeyi bul!</p>
+  </header>
+
+  <div class="aciklama">
+    Bu ay bulmacamızın teması <b>teknoloji ve dijital dönüşüm</b>. İpuçlarını çözerek ızgarayı doldur;
+    kırmızı numaralı sarı kutulardaki 6 harfi sırasıyla birleştirdiğinde ayın gizli kelimesine ulaşacaksın. Bol şans!
+  </div>
+
+  <div class="alanlar">
+    <div class="izgara-kutu">
+      <div id="izgara"></div>
+    </div>
+    <div class="ipuclari">
+      <div class="ipucu-grup">
+        <h3>↔ Soldan Sağa</h3>
+        <ol id="across"></ol>
+      </div>
+      <div class="ipucu-grup">
+        <h3>↕ Yukarıdan Aşağı</h3>
+        <ol id="down"></ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="butonlar">
+    <button onclick="temizle()">Temizle</button>
+  </div>
+
+  <div class="sifre-kutu">
+    <h3>🔒 Gizli Kelime</h3>
+    <div class="alt">Sarı kutulardaki 6 harf, sırasıyla</div>
+    <div class="sifre-satir" id="sifreSatir"></div>
+    <div class="mesaj" id="mesaj"></div>
+  </div>
+
+  <footer>Toyota Ağustos Teknoloji Bülteni · İyi eğlenceler!</footer>
+</div>
+
+<script>
+const H=9, W=10;
+// Çözüm hücreleri: [satir, sutun, harf]
+const cells = [[0,5,"H"],[1,0,"A"],[1,1,"L"],[1,2,"G"],[1,3,"O"],[1,4,"R"],[1,5,"İ"],[1,6,"T"],[1,7,"M"],[1,8,"A"],[2,5,"B"],[3,0,"S"],[3,1,"E"],[3,2,"N"],[3,3,"S"],[3,4,"Ö"],[3,5,"R"],[3,7,"S"],[4,1,"N"],[4,5,"İ"],[4,7,"U"],[5,1,"E"],[5,4,"O"],[5,5,"T"],[5,6,"O"],[5,7,"N"],[5,8,"O"],[5,9,"M"],[6,1,"R"],[6,7,"U"],[7,1,"J"],[7,7,"C"],[8,1,"İ"],[8,7,"U"]];
+
+// Kelimeler: başlangıç, yön, ipucu no, key hücresi (SİSTEM sırası)
+const kelimeler = [
+  {clue:1, dir:"across", r:3, c:0, len:6, soru:"Sıcaklık, ışık veya hareket gibi fiziksel verileri ölçüp elektronik sinyale çeviren algılayıcı birim.", keyr:3, keyc:3},
+  {clue:2, dir:"down",   r:0, c:5, len:6, soru:"Hem içten yanmalı motoru hem de elektrik motorunu birlikte kullanan araç türü.", keyr:4, keyc:5},
+  {clue:3, dir:"down",   r:3, c:7, len:6, soru:"Ağ üzerinden diğer cihazlara veri ve hizmet sağlayan merkezi bilgisayar (server).", keyr:3, keyc:7},
+  {clue:4, dir:"across", r:5, c:4, len:6, soru:"Sürücüye gerek kalmadan kendi kendine gidebilen araç türü.", keyr:5, keyc:5},
+  {clue:5, dir:"down",   r:3, c:1, len:6, soru:"İş yapabilme gücü; elektrikli araçların bataryasında depolanır.", keyr:5, keyc:1},
+  {clue:6, dir:"across", r:1, c:0, len:9, soru:"Bir problemi çözmek için izlenen adım adım işlem dizisi; yapay zekânın temeli.", keyr:1, keyc:7},
+];
+
+const TR = s => (s||"").toLocaleUpperCase("tr-TR");
+const map = {};            // "r,c" -> harf
+cells.forEach(([r,c,h]) => map[r+","+c] = h);
+
+// key hücreleri ve şifre sırası
+const keyOrder = {};       // "r,c" -> pos(1..6)
+kelimeler.slice().sort((a,b)=>a.clue-b.clue).forEach(k => keyOrder[k.keyr+","+k.keyc] = k.clue);
+// başlangıç numaraları
+const startNo = {};
+kelimeler.forEach(k => { const key=k.r+","+k.c; startNo[key] = (startNo[key]||k.clue); });
+
+const izgara = document.getElementById("izgara");
+izgara.style.gridTemplateColumns = `repeat(${W}, 42px)`;
+izgara.style.gridTemplateRows = `repeat(${H}, 42px)`;
+
+const inputs = {}; // "r,c" -> input
+for (let r=0;r<H;r++){
+  for (let c=0;c<W;c++){
+    const key=r+","+c;
+    const div=document.createElement("div");
+    div.style.gridRow=(r+1); div.style.gridColumn=(c+1);
+    if (map[key]===undefined){ div.className="bos"; izgara.appendChild(div); continue; }
+    div.className="cell"+(keyOrder[key]?" key":"");
+    if (startNo[key]){ const n=document.createElement("span"); n.className="no"; n.textContent=startNo[key]; div.appendChild(n); }
+    if (keyOrder[key]){ const p=document.createElement("span"); p.className="pos"; p.textContent=keyOrder[key]; div.appendChild(p); }
+    const inp=document.createElement("input");
+    inp.maxLength=1; inp.dataset.r=r; inp.dataset.c=c;
+    div.appendChild(inp); izgara.appendChild(div);
+    inputs[key]=inp;
+  }
+}
+
+// ipuçları
+kelimeler.forEach(k=>{
+  const li=document.createElement("li");
+  li.innerHTML=`<b>${k.clue}</b><span>${k.soru} <span class="uzunluk">(${k.len} harf)</span></span>`;
+  document.getElementById(k.dir).appendChild(li);
+});
+
+// şifre kutuları
+const sifreSatir=document.getElementById("sifreSatir");
+for(let i=0;i<6;i++){const sb=document.createElement("div");sb.className="sb";sb.textContent="?";sifreSatir.appendChild(sb);}
+
+function sifreGuncelle(){
+  const boxes=sifreSatir.children;
+  kelimeler.slice().sort((a,b)=>a.clue-b.clue).forEach(k=>{
+    const inp=inputs[k.keyr+","+k.keyc];
+    const v=TR(inp.value||"");
+    boxes[k.clue-1].textContent=v||"?";
+    boxes[k.clue-1].classList.toggle("dolu",!!v);
+  });
+  // çözüldü mü? (gizli kelime SİSTEM)
+  const sifre=kelimeler.slice().sort((a,b)=>a.clue-b.clue).map(k=>TR(inputs[k.keyr+","+k.keyc].value||"")).join("");
+  const mesaj=document.getElementById("mesaj");
+  // tüm ızgara doğru doldu mu?
+  let tamam=true;
+  for(const key in map){ if(TR(inputs[key].value||"")!==TR(map[key])){tamam=false;break;} }
+  if(tamam){ mesaj.textContent="🎉 Tebrikler! Bulmacayı çözdün. Gizli kelime: "+sifre; }
+  else if(sifre==="SİSTEM"){ mesaj.textContent="✅ Gizli kelimeyi buldun: SİSTEM! Birkaç kutu hâlâ eksik olabilir."; }
+  else { mesaj.textContent=""; }
+}
+
+// etkileşim
+Object.values(inputs).forEach(inp=>{
+  inp.addEventListener("input",()=>{
+    inp.value=TR(inp.value).replace(/[^A-ZÇĞİIÖŞÜ]/g,"");
+    sifreGuncelle();
+    if(inp.value){ // sağdaki, yoksa alttaki dolu hücreye geç
+      const r=+inp.dataset.r,c=+inp.dataset.c;
+      const nxt=inputs[r+","+(c+1)]||inputs[(r+1)+","+c];
+      if(nxt) nxt.focus();
+    }
+  });
+  inp.addEventListener("keydown",e=>{
+    const r=+inp.dataset.r,c=+inp.dataset.c;
+    if(e.key==="Backspace"&&!inp.value){const p=inputs[r+","+(c-1)]||inputs[(r-1)+","+c];if(p)p.focus();}
+    if(e.key==="ArrowRight"&&inputs[r+","+(c+1)])inputs[r+","+(c+1)].focus();
+    if(e.key==="ArrowLeft"&&inputs[r+","+(c-1)])inputs[r+","+(c-1)].focus();
+    if(e.key==="ArrowDown"&&inputs[(r+1)+","+c])inputs[(r+1)+","+c].focus();
+    if(e.key==="ArrowUp"&&inputs[(r-1)+","+c])inputs[(r-1)+","+c].focus();
+  });
+});
+
+function temizle(){Object.values(inputs).forEach(i=>i.value="");sifreGuncelle();}
+sifreGuncelle();
+</script>
+</body>
+</html>
