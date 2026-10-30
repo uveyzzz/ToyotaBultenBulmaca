@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toyota Eylül Teknoloji Bülteni · Çengel Bulmaca</title>
+<title>Toyota Ekim Teknoloji Bülteni · Çengel Bulmaca</title>
 <style>
   :root{
     --kirmizi:#EB0A1E;--koyu:#1a1a1a;--gri:#6b7280;--kart:#fff;
@@ -59,14 +59,14 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="marka">Toyota · Eylül Teknoloji Bülteni</div>
+    <div class="marka">Toyota · Ekim Teknoloji Bülteni</div>
     <h1>Aylık Çengel Bulmaca</h1>
     <p>Kelimeler birbirini kesiyor. Sarı kutulardaki harfleri sırayla topla, gizli kelimeyi bul!</p>
   </header>
 
   <div class="aciklama">
-    Bu ayın teması <b>otomasyon ve akıllı üretim</b>. İpuçlarını çözerek ızgarayı doldur;
-    kırmızı numaralı sarı kutulardaki 6 harfi sırasıyla birleştirdiğinde Eylül ayının gizli kelimesine ulaşacaksın.
+    Bu ayın teması <b>bağlantılı dünya ve akıllı cihazlar</b>. İpuçlarını çözerek ızgarayı doldur;
+    kırmızı numaralı sarı kutulardaki 6 harfi sırasıyla birleştirdiğinde Ekim ayının gizli kelimesine ulaşacaksın.
     İpucu: Toyota Üretim Sistemi'nin temel kavramlarından biri. Bol şans!
   </div>
 
@@ -97,7 +97,7 @@
     <div class="mesaj" id="mesaj"></div>
   </div>
 
-  <footer>Toyota Eylül Teknoloji Bülteni · İyi eğlenceler!</footer>
+  <footer>Toyota Ekim Teknoloji Bülteni · İyi eğlenceler!</footer>
 </div>
 
 <script>
@@ -105,7 +105,7 @@
 /* ============================================================
    GÜVENLİK NOTU
    Bu dosyada cevap harfleri HİÇBİR yerde açık olarak yer almaz.
-   Doğrulama, Eylül ayına özel tuz (salt) ile 150.000 kez
+   Doğrulama, Ekim ayına özel tuz (salt) ile 150.000 kez
    yinelenen SHA-256 özetleri karşılaştırılarak yapılır.
    Konsoldan veya kaynağı görüntüleyerek cevabı okumak mümkün değildir.
    ============================================================ */
@@ -157,7 +157,7 @@ function sha256bytes(bytes){
 function hex(b){return b.map(x=>x.toString(16).padStart(2,"0")).join("");}
 
 /* Yavaş özet: kaba kuvvet denemelerini pahalı hale getirir */
-const SALT="TMTR-2026-09-cengel-v1";
+const SALT="TMTR-2026-10-cengel-v1";
 const ITER=150000;
 const _cache=new Map();
 function slowHash(str){
@@ -170,21 +170,21 @@ function esit(a,b){if(a.length!==b.length)return false;let d=0;
  for(let i=0;i<a.length;i++)d|=a.charCodeAt(i)^b.charCodeAt(i);return d===0;}
 
 /* ---------- Doğrulama sabitleri (harf içermez) ---------- */
-const GRID_HASH="b2e2f927181a701fff999734aca1bd27dcfbcfc533d11cc11ee08e9c94077659";
-const KEY_HASH ="8dc7e1acfdb12df1b0aeebb6be3250b0c2abdc0526477f318936a3dc35924080";
+const GRID_HASH="92667792766be31787dd156353a095cbfc8b0968f693ebe28065b74df1b1a73b";
+const KEY_HASH ="9cf191c7a72d7eb456595fe1141546e057289708c2c17b552a325999ea3f470e";
 
 /* ---------- Izgara yapısı: yalnızca koordinatlar, harf YOK ---------- */
-const H=9, W=8;
-const coords=[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[1,2],[2,2],[3,2],[3,6],[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,6],[5,6],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[7,6],[8,1],[8,2],[8,3],[8,4],[8,5],[8,6],[8,7]];
+const H=7, W=9;
+const coords=[[0,5],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[2,5],[2,8],[3,2],[3,5],[3,8],[4,0],[4,1],[4,2],[4,3],[4,4],[4,5],[4,8],[5,2],[5,8],[6,2],[6,4],[6,5],[6,6],[6,7],[6,8]];
 
 /* Kelimeler: konum, yön, ipucu, anahtar (sarı) hücre — cevap harfi yok */
 const kelimeler=[
- {clue:1, dir:"across", r:0, c:0, len:8, soru:"Dönme hareketini ve yönelimi algılayan, telefonlarda ve araçlarda denge kontrolünde kullanılan sensör.", keyr:0, keyc:0},
- {clue:2, dir:"across", r:6, c:1, len:6, soru:"Belirli bir işi yapmak için enerjiyi harekete çeviren düzenek; \"... öğrenmesi\" yapay zekânın alt dalıdır.", keyr:6, keyc:4},
- {clue:3, dir:"across", r:8, c:1, len:7, soru:"Bilginin sayısal ortama taşınmasını ifade eden, bu bültenin de adında geçen dönüşümün sıfatı.", keyr:8, keyc:1},
- {clue:4, dir:"down",   r:0, c:2, len:5, soru:"Üretim hatlarında tekrarlayan işleri insan yerine yapan programlanabilir makine.", keyr:1, keyc:2},
- {clue:5, dir:"down",   r:3, c:6, len:6, soru:"Görüntü kaydeden cihaz; araçlarda park ve şerit takip sistemlerinin gözü.", keyr:3, keyc:6},
- {clue:6, dir:"across", r:4, c:0, len:7, soru:"Elektrikli ve hibrit araçlarda enerjiyi depolayan birim.", keyr:4, keyc:1}
+ {clue:1, dir:"across",  r:4, c:0, len:6, soru:"Bilgisayara harf ve rakam girmek için kullanılan, tuşlardan oluşan donanım.", keyr:4, keyc:0},
+ {clue:2, dir:"down",    r:1, c:8, len:6, soru:"Dokunmatik ekranlı, telefondan büyük dizüstünden küçük taşınabilir cihaz.", keyr:2, keyc:8},
+ {clue:3, dir:"across",  r:1, c:1, len:8, soru:"Dünya genelindeki bilgisayarları birbirine bağlayan küresel ağ.", keyr:1, keyc:2},
+ {clue:4, dir:"across",  r:6, c:4, len:5, soru:"Verilerin ve uygulamaların kendi cihazımız yerine uzak sunucularda tutulduğu bilişim modeli.", keyr:6, keyc:4},
+ {clue:5, dir:"down",    r:3, c:2, len:4, soru:"Bataryaya yeniden enerji yükleme işlemi; elektrikli araçlar için istasyonları kuruluyor.", keyr:4, keyc:2},
+ {clue:6, dir:"down",    r:0, c:5, len:5, soru:"Uzaktan kumandayla ya da otonom olarak uçabilen insansız hava aracı.", keyr:3, keyc:5}
 ];
 
 const TR=s=>(s||"").toLocaleUpperCase("tr-TR");
